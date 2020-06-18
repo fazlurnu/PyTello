@@ -7,6 +7,7 @@ face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
 GREEN = (0, 255, 0)
 BLUE = (255, 0, 0)
 RED = (0, 0, 255)
+BLACK = (0, 0, 0)
 
 def detect_face(frame, display = False):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -21,12 +22,17 @@ def detect_face(frame, display = False):
     
     cv.circle(frame, center, 5, RED, 2)
     
-    for (x, y, w, h) in faces:
+    #print(len(faces))
+    
+    for i, (x, y, w, h) in enumerate(faces):
         cv.rectangle(frame, (x, y), (x+w, y+h), BLUE, 2)
         
         center_face = (int(x + w/2), int(y + h/2))
         cv.line(frame, center, center_face, RED, 2)
         cv.circle(frame, center_face, 5, RED, 2)
+        
+        cv.putText(frame, "id: " + str(i+1), (x, y-10), cv.FONT_HERSHEY_SIMPLEX,  
+                       0.5, BLUE, 2, cv.LINE_AA)
         
     if(display):
         cv.imshow('frame', frame)
