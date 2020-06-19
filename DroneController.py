@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 class Tello(object):
     def __init__(self, controller_ip='192.168.10.2', controller_port=8889,
                  drone_ip='192.168.10.1', drone_port=8889):
+        print("Initialize Drone Controller")
         self.controller_ip = controller_ip
         self.controller_port =  controller_port
         self.controller_address = (self.controller_ip, self.controller_port)
@@ -16,10 +17,11 @@ class Tello(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind(self.controller_address)
         
-        self.send_command('command') #initialize SDK mode
-        self.send_command('streamon') #initialize video streaming
+        self.socket.sendto('command'.encode('utf-8'), self.drone_address) #initialize SDK mode
+        self.socket.sendto('streamon'.encode('utf-8'), self.drone_address) #initialize video streaming
         
         def __del__(self):
+            print("Stopping Connection")
             self.stop_connection()
             
         def stop_connection(self):
