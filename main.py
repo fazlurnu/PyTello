@@ -13,7 +13,7 @@ prev_time = time.time()
 def main():
     tello = DroneController.Tello()
     
-    curr_time = time.time())
+    curr_time = time.time()
     interval = 10
     tello.takeoff()
     
