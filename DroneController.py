@@ -20,22 +20,22 @@ class Tello(object):
         self.socket.sendto('command'.encode('utf-8'), self.drone_address) #initialize SDK mode
         self.socket.sendto('streamon'.encode('utf-8'), self.drone_address) #initialize video streaming
         
-        def __del__(self):
-            print("Stopping Connection")
-            self.stop_connection()
+    def __del__(self):
+        print("Stopping Connection")
+        self.stop_connection()
             
-        def stop_connection(self):
-            self.socket.close()
+    def stop_connection(self):
+        self.socket.close()
             
-        def send_command(self, command):
-            logger.info({'action': 'send_command', 'command': command})
-            self.socket.sendto(command.encode('utf-8'), self.drone_address)
+    def send_command(self, command):
+        logger.info({'action': 'send_command', 'command': command})
+        self.socket.sendto(command.encode('utf-8'), self.drone_address)
             
-        def takeoff(self):
-            self.send_command("takeoff")
+    def takeoff(self):
+        return self.send_command("takeoff")
             
-        def land(self):
-            self.send_command("land")
+    def land(self):
+        return self.send_command("land")
         
         
         
