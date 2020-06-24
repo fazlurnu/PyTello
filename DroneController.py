@@ -17,8 +17,8 @@ class Tello(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind(self.controller_address)
         
-        self.socket.sendto('command'.encode('utf-8'), self.drone_address) #initialize SDK mode
-        self.socket.sendto('streamon'.encode('utf-8'), self.drone_address) #initialize video streaming
+        self.send_command('command')
+        self.send_command('streamon')
             
     def stop_connection(self):
         self.socket.close()
@@ -38,6 +38,8 @@ class Tello(object):
     def __del__(self):
         print("Stopping Connection")
         self.stop_connection()
+        
+
         
         
         
