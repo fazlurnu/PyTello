@@ -4,19 +4,22 @@ import sys
 import threading
 import time
 
-logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-logger = logging.getLogger(__name__)
-
 class Tello(object):
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    LOGGER = logging.getLogger('PyTello')
+    
+    
     def __init__(self, controller_ip='192.168.10.2', controller_port=8889,
                  drone_ip='192.168.10.1', drone_port=8889):
         print("Initialize Drone Controller")
         self.controller_ip = controller_ip
         self.controller_port =  controller_port
         self.controller_address = (self.controller_ip, self.controller_port)
+        
         self.drone_ip = drone_ip
         self.drone_port = drone_port
         self.drone_address = (drone_ip, drone_port)
+        
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind(self.controller_address)
                 
@@ -33,6 +36,11 @@ class Tello(object):
         self.command()
         self.streamon()
         
+    def udp_state_server(self):
+        
+        while True:
+            try:
+                
     def command(self):
         self.send_command('command')
         
@@ -51,17 +59,17 @@ class Tello(object):
         while not stop_event.is_set():
             try:
                 self.response, ip = self.socket.recvfrom(3000)
-                logger.info({'action': 'receive_response',
+                LOGGER.info({'action': 'receive_response',
                              'response': self.response})
     
             except socket.error as ex:
-                logger.error({'action': 'receive_response',
+                LOGGER.error({'action': 'receive_response',
                               'ex': ex})
                 break
             
     
     def stop_connection(self):
-        logger.info({'action': 'stop_connection'})
+        LOGGER.info({'action': 'stop_connection'})
         self.stop_event.set() #stop receiving response when closing connection
         
         retry = 0
@@ -74,7 +82,7 @@ class Tello(object):
         self.socket.close()
             
     def send_command(self, command):
-        logger.info({'action': 'send_command', 'command': command})
+        LOGGER.info({'action': 'send_command', 'command': command})
         self.socket.sendto(command.encode('utf-8'), self.drone_address)
         
         retry = 0
@@ -92,6 +100,9 @@ class Tello(object):
         self.response= None
         
         return response
+    
+    def battery(self):
+        return self.send_command('battery?')
             
     def takeoff(self):
         return self.send_command('takeoff')
