@@ -11,17 +11,15 @@ import time
 def main():
     tello = DroneController.Tello()
     
-    prev_time = time.time()
-    interval = 5
-    time.sleep(2)
-    tello.takeoff()
+    response = tello.takeoff()
     
-    while True:
-        curr_time = time.time()
-        if(curr_time - prev_time > interval):
-            prev_time = curr_time
-            tello.land()
-            break
+    print(response)
+    time.sleep(10)
+    
+    response = tello.land()
+    
+    #if (response == 'ok'):
+    #    tello.stop_connection()
     
 if __name__ == '__main__':
     main()
