@@ -20,6 +20,8 @@ class Tello(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind(self.controller_address)
                 
+        self.stream_on = False
+        
         self.response = None
         self.stop_event = threading.Event()
         
@@ -28,8 +30,22 @@ class Tello(object):
         
         self.response_thread.start()
         
+        self.command()
+        self.streamon()
+        
+    def command(self):
         self.send_command('command')
+        
+    def streamon(self):
         self.send_command('streamon')
+        self.stream_on = True
+        
+    def streamoff(self):
+        self.send_command('streamoff')
+        self.stream_off = False
+    
+    def emergency(self):
+        self.send_command('emergency')
         
     def receive_response(self, stop_event):
         while not stop_event.is_set():
@@ -43,6 +59,7 @@ class Tello(object):
                               'ex': ex})
                 break
             
+    
     def stop_connection(self):
         logger.info({'action': 'stop_connection'})
         self.stop_event.set() #stop receiving response when closing connection
