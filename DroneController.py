@@ -4,9 +4,10 @@ import sys
 import threading
 import time
 
+logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+LOGGER = logging.getLogger('PyTello')
+
 class Tello(object):
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    LOGGER = logging.getLogger('PyTello')
     
     
     def __init__(self, controller_ip='192.168.10.2', controller_port=8889,
@@ -35,11 +36,6 @@ class Tello(object):
         
         self.command()
         self.streamon()
-        
-    def udp_state_server(self):
-        
-        while True:
-            try:
                 
     def command(self):
         self.send_command('command')
