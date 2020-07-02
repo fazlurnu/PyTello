@@ -108,6 +108,36 @@ class Tello(object):
     
     def emergency(self):    
         self.send_command('emergency')    
+        
+    def move(self, direction, distance):    
+        return self.send_command(direction + ' ' + str(distance))
+    
+    def move_up(self, distance):
+        return self.move('up', distance)
+    
+    def move_down(self, distance):
+        return self.move('down', distance)
+    
+    def move_left(self, distance):
+        return self.move('left', distance)
+    
+    def move_right(self, distance):
+        return self.move('right', distance)
+    
+    def move_forward(self, distance):
+        return self.move('forward', distance)
+    
+    def move_back(self, distance):
+        return self.move('back', distance)
+    
+    def rotate(self, direction, degrees):
+        return self.send_command(direction + ' ' + str(degrees))
+    
+    def rotate_cw(self, degrees):
+        return self.rotate('cw', degrees)
+    
+    def rotate_ccw(self, degrees):
+        return self.rotate('ccw', degrees)
     
     def streamon(self):
         self.send_command('streamon')
