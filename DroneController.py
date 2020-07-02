@@ -9,6 +9,8 @@ class Tello(object):
     
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     LOGGER = logging.getLogger('PyTello')    
+    
+    cap = None
     background_frame_read = None
     
     # Video stream, server socket
@@ -46,20 +48,6 @@ class Tello(object):
         self.streamon()
         
     
-    def get_frame_read(self) -> 'BackgroundFrameRead':
-        """Get the BackgroundFrameRead object from the camera drone. Then, you just need to call
-        backgroundFrameRead.frame to get the actual frame received by the drone.
-        Returns:
-            BackgroundFrameRead
-        """
-        if self.background_frame_read is None:
-            self.background_frame_read = BackgroundFrameRead(self, self.get_udp_video_address()).start()
-        return self.background_frame_read
-    
-    def get_udp_video_address(self) -> str:
-        """Internal method, you normally wouldn't call this youself.
-        """
-        return 'udp://@' + self.VS_UDP_IP + ':' + str(self.VS_UDP_PORT)  # + '?overrun_nonfatal=1&fifo_size=5000'
     
     def receive_response(self, stop_event):
         while not stop_event.is_set():
@@ -138,34 +126,4 @@ class Tello(object):
         
     def __del__(self):
         self.stop_connection()
-        
-class BackgroundFrameRead:
-    """
-    This class read frames from a VideoCapture in background. Use
-    backgroundFrameRead.frame to get the current frame.
-    """
-
-    def __init__(self, tello, address):
-        tello.cap = cv.VideoCapture(address)
-        self.cap = tello.cap
-
-        if not self.cap.isOpened():
-            self.cap.open(address)
-
-        self.grabbed, self.frame = self.cap.read()
-        self.stopped = False
-
-    def start(self):
-        threading.Thread(target=self.update_frame, args=(), daemon=True).start()
-        return self
-
-    def update_frame(self):
-        while not self.stopped:
-            if not self.grabbed or not self.cap.isOpened():
-                self.stop()
-            else:
-                (self.grabbed, self.frame) = self.cap.read()
-
-    def stop(self):
-        self.stopped = True
         
