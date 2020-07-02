@@ -1,21 +1,21 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 19 21:02:03 2020
-
-@author: My Laptop
-"""
-
 import DroneController
 import time
+import cv2 as cv
 
 def main():
     tello = DroneController.Tello()
     
     bat = int(tello.battery())
     
-    if(bat>30):
+    if (bat>30):
         tello.takeoff()
-        time.sleep(10)
+        time.sleep(7)        
+        
+        tello.rotate_cw(30)
+        time.sleep(7)
+        tello.rotate_ccw(30)
+        time.sleep(7)
+        
         tello.land()
         tello.stop_connection()
     
