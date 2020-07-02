@@ -9,12 +9,15 @@ def main():
     
     if (bat>30):
         tello.takeoff()
-        time.sleep(7)        
+        time.sleep(8)        
         
-        tello.rotate_cw(30)
-        time.sleep(7)
-        tello.rotate_ccw(30)
-        time.sleep(7)
+        angle = 0
+        for i in range(12):
+            print(angle)
+            tello.rotate_cw(30)
+            angle+=30
+        
+        time.sleep(3)
         
         tello.land()
         tello.stop_connection()
