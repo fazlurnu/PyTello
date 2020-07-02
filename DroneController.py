@@ -73,7 +73,6 @@ class Tello(object):
                 break
             retry+=1
             
-        self.streamoff()
         self.socket.close()
             
     def send_command(self, command):
