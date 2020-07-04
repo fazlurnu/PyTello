@@ -19,7 +19,9 @@ class matrix:
         else:
             self.dimx = dimx
             self.dimy = dimy
-            self.value = [[0 for row in range(dimy)] for col in range(dimx)]
+            self.value = [[0.0 for row in range(dimy)] for col in range(dimx)]
+            
+        return matrix(self.value)
     
     def identity(self, dim):
         # check if valid dimension
@@ -31,6 +33,8 @@ class matrix:
             self.value = [[0 for row in range(dim)] for col in range(dim)]
             for i in range(dim):
                 self.value[i][i] = 1
+                
+        return matrix(self.value)
     
     def show(self):
         for i in range(self.dimx):
