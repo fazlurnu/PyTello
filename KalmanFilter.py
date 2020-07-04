@@ -19,24 +19,39 @@ def kalman_filter(x, u, P, F, R, H, z):
 
 def main():
     
-    measurements = [1, 2, 3]
+    measurements = [[[1.0],[2.0]],
+                    [[2.0],[4.0]],
+                    [[3.0],[6.0]]]
 
     
-    x = matrix([[0.], [0.]])
+    x = matrix([[0.],
+                [0.],
+                [0.],
+                [0.]])
 
     u = matrix([[]])
     u = u.zero(x.dimx, x.dimy)
     
-    P = matrix([[1000., 0.], [0., 1000.]]) # initial uncertainty
-    F = matrix([[1., 1.], [0, 1.]]) # next state function
-    H = matrix([[1., 0.]]) # measurement function
-    R = matrix([[1]]) # measurement uncertainty
+    P = matrix([[50., 0., 0., 0.],
+                [0., 50., 0., 0.],
+                [0., 0., 50., 0.],
+                [0., 0., 0., 50.]]) # initial uncertainty
     
+    F = matrix([[1., 1., 0., 0.],
+                [0., 1., 0., 0.],
+                [0., 0., 1., 1.],
+                [0., 0., 0., 1.]]) # next state function
+    H = matrix([[1., 0., 0., 0.],
+                [0., 0., 1., 0.]]) # measurement function
+    
+    R = matrix([[1., 0.],
+                [0., 1.]]) # measurement uncertainty
+
     for i in range(len(measurements)):
-        z = matrix([[measurements[i]]])
+        z = matrix(measurements[i])
         x, P = kalman_filter(x, u, P, F, R, H, z)
         
-    print(x, P)    
+    print(x)
 
 if __name__ == "__main__":
     main()
