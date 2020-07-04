@@ -12,7 +12,6 @@ BLACK = (0, 0, 0)
 def detect_face(frame, display = False):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-    
 
     frame_height = frame.shape[0]
     frame_width = frame.shape[1]
@@ -28,7 +27,6 @@ def detect_face(frame, display = False):
         is_deteceted = False
         
     if is_deteceted:
-        print('faces detected')
         for i, (x, y, w, h) in enumerate(faces):
             cv.rectangle(frame, (x, y), (x+w, y+h), BLUE, 2)
             
@@ -39,28 +37,33 @@ def detect_face(frame, display = False):
             
             cv.putText(frame, "id: " + str(i+1), (x, y-10), cv.FONT_HERSHEY_SIMPLEX,  
                            0.5, BLUE, 2, cv.LINE_AA)
+    
     else:
-        print('faces not detected')
+        center_face = ()
         
-    if(display):
-        cv.imshow('frame', frame)
-        
-    #diff_x = center[0] - center_face[0]
-    #diff_y = center[1] - center_face[1]
-
-        
-    #return diff_x, diff_y
-        
+    return center_face, is_deteceted
     
 def main():
+    ret, frame = cap.read()
+    frame_prev = frame
+    
     while True:
-        ret, frame = cap.read()
-        detect_face(frame, display=True)
+        ret, frame_now = cap.read()
         
-        #print(diff_x, diff_y)
+        # operation
+        center_face_prev, is_detected_prev = detect_face(frame_prev)
+        center_face_now, is_detected_now = detect_face(frame_now)
+        
+        velox = center_face_now[0] - center_face_prev[0]
+        veloy = center_face_now[1] - center_face_prev[1]
+        
+        print(velox, veloy)
         
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
+        
+        frame_prev = frame_now
+        
         
 
 if __name__ == "__main__":
