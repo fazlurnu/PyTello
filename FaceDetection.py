@@ -1,4 +1,8 @@
 import cv2 as cv
+from Matrix import matrix
+from KalmanFilter import kalman_filter
+
+from time import time
 
 cap = cv.VideoCapture(0)
 
@@ -28,43 +32,63 @@ def detect_face(frame, display = False):
         
     if is_deteceted:
         for i, (x, y, w, h) in enumerate(faces):
-            cv.rectangle(frame, (x, y), (x+w, y+h), BLUE, 2)
-            
             center_face = (int(x + w/2), int(y + h/2))
-                    
-            cv.line(frame, center, center_face, RED, 2)
-            cv.circle(frame, center_face, 5, RED, 2)
-            
-            cv.putText(frame, "id: " + str(i+1), (x, y-10), cv.FONT_HERSHEY_SIMPLEX,  
-                           0.5, BLUE, 2, cv.LINE_AA)
     
     else:
-        center_face = ()
+        center_face = (0,0)
+        (x,y,w,h) = (0,0,0,0)
+        is_deteceted = False
         
-    return center_face, is_deteceted
+    return center_face, (x,y,w,h), is_deteceted
     
 def main():
+    
+    states = matrix([[0.],
+                     [0.],
+                     [0.],
+                     [0.]])
+    
+    P = matrix([[50., 0., 0., 0.],
+                [0., 50., 0., 0.],
+                [0., 0., 50., 0.],
+                [0., 0., 0., 50.]]) # initial uncertainty
+
     ret, frame = cap.read()
-    frame_prev = frame
+    
+    display = True
     
     while True:
         ret, frame_now = cap.read()
         
         # operation
-        center_face_prev, is_detected_prev = detect_face(frame_prev)
-        center_face_now, is_detected_now = detect_face(frame_now)
+        center_face_now, (x,y,w,h), is_detected_now = detect_face(frame_now)
         
-        velox = center_face_now[0] - center_face_prev[0]
-        veloy = center_face_now[1] - center_face_prev[1]
+        if(is_detected_now):
+            
+            z = matrix([[x],[y]])
+            
+            states, P = kalman_filter(states, P, z)
+            xhat = int(states.value[0][0])
+            yhat = int(states.value[2][0])
+            what = w
+            hhat = h
+
+            cv.rectangle(frame_now, (x, y), (x+w, y+h), BLUE, 2)
+            #cv.rectangle(frame_now, (xhat, yhat), (xhat+w, yhat+h), RED, 2)
         
-        print(velox, veloy)
         
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            break
-        
-        frame_prev = frame_now
-        
-        
+        else:
+            states, P = kalman_filter(states, P, z, data_ok=False)
+            xhat = int(states.value[0][0])
+            yhat = int(states.value[2][0])
+            
+            cv.rectangle(frame_now, (xhat, yhat), (xhat+what, yhat+hhat), RED, 2)
+                
+        if(display):       
+            cv.imshow('frame', frame_now)
+            if cv.waitKey(1) & 0xFF == ord('q'):
+                break
+                
 
 if __name__ == "__main__":
     main()
