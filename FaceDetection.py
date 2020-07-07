@@ -3,6 +3,7 @@ from Matrix import matrix
 from KalmanFilter import kalman_filter
 
 from time import time
+import numpy as np
 
 cap = cv.VideoCapture(0)
 
@@ -13,6 +14,20 @@ BLUE = (255, 0, 0)
 RED = (0, 0, 255)
 BLACK = (0, 0, 0)
 
+# Instantiate OCV kalman filter
+class KalmanFilter:
+
+    kf = cv.KalmanFilter(4, 2)
+    kf.measurementMatrix = np.array([[1, 0, 0, 0], [0, 1, 0, 0]], np.float32)
+    kf.transitionMatrix = np.array([[1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0], [0, 0, 0, 1]], np.float32)
+
+    def Estimate(self, coordX, coordY):
+        ''' This function estimates the position of the object'''
+        measured = np.array([[np.float32(coordX)], [np.float32(coordY)]])
+        self.kf.correct(measured)
+        predicted = self.kf.predict()
+        return predicted
+    
 def detect_face(frame, display = False):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
@@ -48,12 +63,18 @@ def main():
                      [0.],
                      [0.]])
     
-    P = matrix([[50., 0., 0., 0.],
-                [0., 50., 0., 0.],
-                [0., 0., 50., 0.],
-                [0., 0., 0., 50.]]) # initial uncertainty
+    xhat = int(states.value[0][0])
+    yhat = int(states.value[2][0])
+    
+    P = matrix([[1000., 0., 0., 0.],
+                [0., 1000., 0., 0.],
+                [0., 0., 1000., 0.],
+                [0., 0., 0., 1000.]]) # initial uncertainty
 
     ret, frame = cap.read()
+    
+    kfObj = KalmanFilter()
+    predictedCoords = np.zeros((2, 1), np.float32)
     
     display = True
     time_prev = time()
@@ -64,31 +85,33 @@ def main():
         # operation
         center_face_now, (x,y,w,h), is_detected_now = detect_face(frame_now)
         dt = time() - time_prev
-        time_prev = time()        
-        
+    
         if(is_detected_now):
+            time_prev = time()            
             
             z = matrix([[x],[y]])
-            
             states, P = kalman_filter(states, P, z, dt)
+            predictedCoords = kfObj.Estimate(x, y)
             xhat = int(states.value[0][0])
             yhat = int(states.value[2][0])
             what = w
             hhat = h
-
-            cv.rectangle(frame_now, (x, y), (x+w, y+h), BLUE, 2)
+            
             cv.rectangle(frame_now, (xhat, yhat), (xhat+w, yhat+h), RED, 2)
-        
+            cv.rectangle(frame_now, (x, y), (x+w, y+h), BLUE, 2)
+            cv.rectangle(frame_now, (predictedCoords[0], predictedCoords[1]), (predictedCoords[0]+w, predictedCoords[1]+h), GREEN, 2)
         
         else:
             states, P = kalman_filter(states, P, z, dt, data_ok=False)
             xhat = int(states.value[0][0])
             yhat = int(states.value[2][0])
+            predictedCoords = kfObj.Estimate(xhat, yhat)
             
             cv.rectangle(frame_now, (xhat, yhat), (xhat+what, yhat+hhat), RED, 2)
+            cv.rectangle(frame_now, (predictedCoords[0], predictedCoords[1]), (predictedCoords[0]+what, predictedCoords[1]+hhat), GREEN, 2)
                 
         if(display):
-            print(states.value[1][0])
+            print(dt)
             cv.imshow('frame', frame_now)
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
