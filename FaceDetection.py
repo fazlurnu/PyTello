@@ -13,20 +13,6 @@ GREEN = (0, 255, 0)
 BLUE = (255, 0, 0)
 RED = (0, 0, 255)
 BLACK = (0, 0, 0)
-
-# Instantiate OCV kalman filter
-class KalmanFilter:
-
-    kf = cv.KalmanFilter(4, 2)
-    kf.measurementMatrix = np.array([[1, 0, 0, 0], [0, 1, 0, 0]], np.float32)
-    kf.transitionMatrix = np.array([[1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0], [0, 0, 0, 1]], np.float32)
-
-    def Estimate(self, coordX, coordY):
-        ''' This function estimates the position of the object'''
-        measured = np.array([[np.float32(coordX)], [np.float32(coordY)]])
-        self.kf.correct(measured)
-        predicted = self.kf.predict()
-        return predicted
     
 def detect_face(frame, display = False):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -73,9 +59,6 @@ def main():
 
     ret, frame = cap.read()
     
-    kfObj = KalmanFilter()
-    predictedCoords = np.zeros((2, 1), np.float32)
-    
     display = True
     time_prev = time()
     
@@ -91,7 +74,6 @@ def main():
             
             z = matrix([[x],[y]])
             states, P = kalman_filter(states, P, z, dt)
-            predictedCoords = kfObj.Estimate(x, y)
             xhat = int(states.value[0][0])
             yhat = int(states.value[2][0])
             what = w
@@ -99,16 +81,13 @@ def main():
             
             cv.rectangle(frame_now, (xhat, yhat), (xhat+w, yhat+h), RED, 2)
             cv.rectangle(frame_now, (x, y), (x+w, y+h), BLUE, 2)
-            cv.rectangle(frame_now, (predictedCoords[0], predictedCoords[1]), (predictedCoords[0]+w, predictedCoords[1]+h), GREEN, 2)
         
         else:
             states, P = kalman_filter(states, P, z, dt, data_ok=False)
             xhat = int(states.value[0][0])
             yhat = int(states.value[2][0])
-            predictedCoords = kfObj.Estimate(xhat, yhat)
             
             cv.rectangle(frame_now, (xhat, yhat), (xhat+what, yhat+hhat), RED, 2)
-            cv.rectangle(frame_now, (predictedCoords[0], predictedCoords[1]), (predictedCoords[0]+what, predictedCoords[1]+hhat), GREEN, 2)
                 
         if(display):
             print(dt)
