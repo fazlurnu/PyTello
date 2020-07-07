@@ -349,6 +349,7 @@ class Tello:
         Returns:
             BackgroundFrameRead
         """
+        print("get_frame")
         if self.background_frame_read is None:
             self.background_frame_read = BackgroundFrameRead(self, self.get_udp_video_address()).start()
         return self.background_frame_read
@@ -843,7 +844,8 @@ class BackgroundFrameRead:
     """
 
     def __init__(self, tello, address):
-        tello.cap = cv2.VideoCapture(address)
+        print("create")
+        tello.cap = cv.VideoCapture(address)
         self.cap = tello.cap
 
         if not self.cap.isOpened():

@@ -1,12 +1,11 @@
 from Matrix import matrix
 
-def kalman_filter(x, P, z, data_ok = True):
+def kalman_filter(x, P, z, dt, data_ok = True):
 
     u = matrix([[]])
     u = u.zero(x.dimx, x.dimy)
     
-    dv = 1.05
-    dt = 500
+    dv = 1.001
     
     F = matrix([[1., dt, 0., 0.],
                 [0., dv, 0., 0.],
@@ -16,8 +15,8 @@ def kalman_filter(x, P, z, data_ok = True):
     H = matrix([[1., 0., 0., 0.],
                 [0., 0., 1., 0.]]) # measurement function
     
-    R = matrix([[1, 0.],
-                [0., 1]]) # measurement uncertainty
+    R = matrix([[0.1, 0.],
+                [0., 0.1]]) # measurement uncertainty
     
     I = matrix([[]])
     I = I.identity(x.dimx)
