@@ -1,30 +1,59 @@
-from DroneController import Tello
-from FaceDetection import detect_face
+import sys
+import traceback
+import tellopy
+import av
+import cv2.cv2 as cv2  # for avoidance of pylint error
+import numpy
 import time
-import cv2 as cv
 
-cap = cv.VideoCapture(0)
+from FaceDetection import detect_face
 
-tello = Tello()
-tello.connect()
+def main():
+    drone = tellopy.Tello()
 
-bat = tello.query_battery()
+    try:
+        drone.connect()
+        drone.wait_for_connection(60.0)
 
-tello.streamon()
+        retry = 3
+        container = None
+        while container is None and 0 < retry:
+            retry -= 1
+            try:
+                container = av.open(drone.get_video_stream())
+            except av.AVError as ave:
+                print(ave)
+                print('retry...')
 
-tello.takeoff()
-tello.move_up(20)
+        # skip first 300 frames
+        frame_skip = 300
+        while True:
+            for frame in container.decode(video=0):
+                if 0 < frame_skip:
+                    frame_skip = frame_skip - 1
+                    continue
+                start_time = time.time()
+                image = cv2.cvtColor(numpy.array(frame.to_image()), cv2.COLOR_RGB2BGR)
+                
+                center_face_now, is_detected_now = detect_face(image, display=True)
+                
+                cv2.imshow('frame', image)
+                
+                cv2.waitKey(1)
+                if frame.time_base < 1.0/60:
+                    time_base = 1.0/60
+                else:
+                    time_base = frame.time_base
+                frame_skip = int((time.time() - start_time)/time_base)
+                    
 
-while True:
-    print("hello1")
-    frame = tello.get_frame_read().frame  # capturing frame from drone 
-    print("hello2")
-    diff_x, diff_y = detect_face(frame, display=True)
-    
-    tello.send_rc_control(int(-diff_x/4), 0, int(diff_y/4), 0)
-    
-    if cv.waitKey(1) & 0xFF == ord('q'):  # quit from script
-        cap.release()
-        cv.destroyAllWindows()
-        tello.land()
-        break
+    except Exception as ex:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback.print_exception(exc_type, exc_value, exc_traceback)
+        print(ex)
+    finally:
+        drone.quit()
+        cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    main()
