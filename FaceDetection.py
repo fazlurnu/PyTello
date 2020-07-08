@@ -1,9 +1,4 @@
 import cv2 as cv
-from Matrix import matrix
-from KalmanFilter import kalman_filter
-
-from time import time
-import numpy as np
 
 cap = cv.VideoCapture(0)
 
@@ -34,67 +29,30 @@ def detect_face(frame, display = False):
     if is_deteceted:
         for i, (x, y, w, h) in enumerate(faces):
             center_face = (int(x + w/2), int(y + h/2))
+            cv.rectangle(frame, (x, y), (x+w, y+h), BLUE, 2)
     
     else:
         center_face = (0,0)
-        (x,y,w,h) = (0,0,0,0)
-        is_deteceted = False
         
-    return center_face, (x,y,w,h), is_deteceted
+    return center_face, is_deteceted
     
 def main():
     
-    states = matrix([[0.],
-                     [0.],
-                     [0.],
-                     [0.]])
-    
-    xhat = int(states.value[0][0])
-    yhat = int(states.value[2][0])
-    
-    P = matrix([[1000., 0., 0., 0.],
-                [0., 1000., 0., 0.],
-                [0., 0., 1000., 0.],
-                [0., 0., 0., 1000.]]) # initial uncertainty
-
     ret, frame = cap.read()
     
     display = True
-    time_prev = time()
     
     while True:
         ret, frame_now = cap.read()
         
         # operation
-        center_face_now, (x,y,w,h), is_detected_now = detect_face(frame_now)
-        dt = time() - time_prev
-    
-        if(is_detected_now):
-            time_prev = time()            
-            
-            z = matrix([[x],[y]])
-            states, P = kalman_filter(states, P, z, dt)
-            xhat = int(states.value[0][0])
-            yhat = int(states.value[2][0])
-            what = w
-            hhat = h
-            
-            cv.rectangle(frame_now, (xhat, yhat), (xhat+w, yhat+h), RED, 2)
-            cv.rectangle(frame_now, (x, y), (x+w, y+h), BLUE, 2)
+        center_face_now, is_detected_now = detect_face(frame_now, display=True)
         
-        else:
-            states, P = kalman_filter(states, P, z, dt, data_ok=False)
-            xhat = int(states.value[0][0])
-            yhat = int(states.value[2][0])
-            
-            cv.rectangle(frame_now, (xhat, yhat), (xhat+what, yhat+hhat), RED, 2)
-                
-        if(display):
-            print(dt)
+        if display:
             cv.imshow('frame', frame_now)
+
             if cv.waitKey(1) & 0xFF == ord('q'):
-                break
-                
+                break                
 
 if __name__ == "__main__":
     main()
