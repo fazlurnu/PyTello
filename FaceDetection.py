@@ -9,7 +9,7 @@ BLUE = (255, 0, 0)
 RED = (0, 0, 255)
 BLACK = (0, 0, 0)
     
-def detect_face(frame, display = False):
+def detect_face(frame):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
@@ -29,24 +29,30 @@ def detect_face(frame, display = False):
     if is_deteceted:
         for i, (x, y, w, h) in enumerate(faces):
             center_face = (int(x + w/2), int(y + h/2))
+            diff_x = center_face[0] - center[0]
+            diff_y = center_face[1] - center[1]
             cv.rectangle(frame, (x, y), (x+w, y+h), BLUE, 2)
+            cv.line(frame, center, center_face, RED, thickness=2)
     
     else:
         center_face = (0,0)
+        diff_x = 0
+        diff_y = 0
         
-    return center_face, is_deteceted
+    return diff_x, diff_y
     
 def main():
     
     ret, frame = cap.read()
     
+    print(len(frame), len(frame[0]))
     display = True
     
     while True:
         ret, frame_now = cap.read()
         
         # operation
-        center_face_now, is_detected_now = detect_face(frame_now, display=True)
+        center_face_now, is_detected_now = detect_face(frame_now)
         
         if display:
             cv.imshow('frame', frame_now)
