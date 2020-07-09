@@ -5,7 +5,7 @@ import cv2 as cv
 
 kpX = 0.11
 kpY = 0.15
-title = str("kpX= " + str(kpX) + ", kpY= " + str(kpY) + ".txt")
+title = str("log/kpX= " + str(kpX) + ", kpY= " + str(kpY) + ".txt")
 
 cap = cv.VideoCapture(0)
 
@@ -18,6 +18,14 @@ tello.move_up(10)
 
 start_time = time.time()
 
+def set_limit(x: int, lower: int, upper: int):
+    if x > upper:
+        return upper
+    elif x < lower:
+        return lower
+    else:
+        return x
+        
 while True:
     time_pure = time.time() - start_time
     file1 = open(title,"a")
@@ -31,10 +39,8 @@ while True:
     controlX = diff_x * kpX
     controlY = diff_y * kpY
     
-    if (controlX > 35):
-        controlX = 35
-    elif (controlX < -35):
-        controlX = -35
+    controlX = set_limit(controlX, -35, 35)
+    controlY = set_limit(controlY, -35, 35)
         
     tello.send_rc_control(int(controlX), 0, 0, 0)
     
