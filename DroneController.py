@@ -89,6 +89,9 @@ class Tello:
 
         drones[host] = {'responses': [], 'state': {}, }
         
+        self.connect()
+        self.streamon()
+        
     
     def get_own_udp_object(self):
         global drones
@@ -326,7 +329,7 @@ class Tello:
     def get_udp_video_address(self) -> str:
         """Internal method, you normally wouldn't call this youself.
         """
-        return 'udp://@' + self.VS_UDP_IP + ':' + str(self.VS_UDP_PORT)  # + '?overrun_nonfatal=1&fifo_size=5000'
+        return "udp://" + self.VS_UDP_IP + ':' + str(self.VS_UDP_PORT)  # + '?overrun_nonfatal=1&fifo_size=5000'
 
     def get_video_capture(self):
         """Get the VideoCapture object from the camera drone.
@@ -349,7 +352,6 @@ class Tello:
         Returns:
             BackgroundFrameRead
         """
-        print("get_frame")
         if self.background_frame_read is None:
             self.background_frame_read = BackgroundFrameRead(self, self.get_udp_video_address()).start()
         return self.background_frame_read
@@ -692,7 +694,7 @@ class Tello:
         Arguments:
             x: 10-100
         """
-        speed = self.set_limit(speed, 10, 100)
+        x = self.set_limit(x, 10, 100)
         return self.send_control_command("speed " + str(x))
 
     def send_rc_control(self, left_right_velocity: int, forward_backward_velocity: int, up_down_velocity: int,
@@ -706,10 +708,12 @@ class Tello:
         """
         if time.time() - self.last_rc_control_timestamp > self.TIME_BTW_RC_CONTROL_COMMANDS:
             self.last_rc_control_timestamp = time.time()
-            return self.send_command_without_return('rc %s %s %s %s' % (self.set_limit(left_right_velocity, -100, 100),
-                                                                        self.set_limit(forward_backward_velocity, -100, 100),
-                                                                        self.set_limit(up_down_velocity, -100, 100),
-                                                                        self.set_limit(yaw_velocity, -100, 100)))
+            lower_limit = -35
+            upper_limit = 35
+            return self.send_command_without_return('rc %s %s %s %s' % (self.set_limit(left_right_velocity, lower_limit, upper_limit),
+                                                                        self.set_limit(forward_backward_velocity, lower_limit, upper_limit),
+                                                                        self.set_limit(up_down_velocity, lower_limit, upper_limit),
+                                                                        self.set_limit(yaw_velocity, lower_limit, upper_limit)))
 
     def set_limit(self, x: int, lower: int, upper: int):
         if x > upper:
@@ -844,17 +848,20 @@ class BackgroundFrameRead:
     """
 
     def __init__(self, tello, address):
-        print("create")
+        print("create at :" + str(address))
         tello.cap = cv.VideoCapture(address)
         self.cap = tello.cap
 
         if not self.cap.isOpened():
+            print("cap is opened: " + str(address))
             self.cap.open(address)
 
         self.grabbed, self.frame = self.cap.read()
+        print("image size= " + str(len(self.frame)) + "x" + str(len(self.frame[0])))
         self.stopped = False
 
     def start(self):
+        print("I'm in start")
         Thread(target=self.update_frame, args=(), daemon=True).start()
         return self
 
