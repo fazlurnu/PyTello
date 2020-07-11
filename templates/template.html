@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Flask Parent Template</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
+    
+</head>
+  <body>
+    <header>
+      <div class="container">
+        <h1 class="logo">DJI Tello User Interface</h1>
+        </nav></strong>
+      </div>
+    </header>
+    
+{% block content %}
+{% endblock %}
+
+ </body>
+</html>
