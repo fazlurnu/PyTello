@@ -39,7 +39,7 @@ def detect_face(frame):
         center_face = (0,0)
         diff_x = 0
         diff_y = 0
-        w = 0
+        w = 9999
         
     return diff_x, diff_y, w
     
