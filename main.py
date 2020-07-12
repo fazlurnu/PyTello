@@ -40,8 +40,10 @@ while True:
     controlX = set_limit(controlX, -35, 35)
     controlY = set_limit(controlY, -35, 35)
     
-    if (width < 200):
+    if (width < 150):
         controlPitch = 20
+    else:
+        controlPitch = 0
         
     tello.send_rc_control(0, controlPitch, int(-controlY), int(controlX))
     
