@@ -1,4 +1,5 @@
 import cv2 as cv
+import time
 
 cap = cv.VideoCapture(0)
 
@@ -33,19 +34,19 @@ def detect_face(frame):
             diff_y = center_face[1] - center[1]
             cv.rectangle(frame, (x, y), (x+w, y+h), BLUE, 2)
             cv.line(frame, center, center_face, RED, thickness=2)
-    
+
     else:
         center_face = (0,0)
         diff_x = 0
         diff_y = 0
+        w = 9999
         
-    return diff_x, diff_y
+    return diff_x, diff_y, w
     
 def main():
     
     ret, frame = cap.read()
     
-    print(len(frame), len(frame[0]))
     display = True
     
     while True:
