@@ -39,7 +39,7 @@ def detect_face(frame):
         center_face = (0,0)
         diff_x = 0
         diff_y = 0
-        w = 9999
+        w = 0
         
     return diff_x, diff_y, w
     
@@ -53,7 +53,8 @@ def main():
         ret, frame_now = cap.read()
         
         # operation
-        center_face_now, is_detected_now = detect_face(frame_now)
+        diff_x, diff_y, width = detect_face(frame_now)
+        print(width)
         
         if display:
             cv.imshow('frame', frame_now)
