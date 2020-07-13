@@ -34,27 +34,22 @@
     {% block content %}
 
     <p id="status">Status: Landed</p>
+    
     <button id="TO_LD" class="button button1" onclick="myFunction()">Take Off</button>
 
     <script>
       function myFunction() {
         if (document.getElementById("TO_LD").innerHTML == "Take Off"){
           if (confirm("Press OK to Confirm Take Off")) {
-            txt = "Take Off Executed";
             document.getElementById("TO_LD").innerHTML = "Landing";
             document.getElementById("status").innerHTML = "Status: Flying";
-          } else {
-            txt = "Take Off Canceled";
           }
         }
         
         else{
           if (confirm("Press OK to Confirm Landing")) {
-            txt = "Landing Executed";
             document.getElementById("TO_LD").innerHTML = "Take Off";
             document.getElementById("status").innerHTML = "Status: Landed";
-          } else {
-            txt = "Landing Canceled";
           }
         }
           

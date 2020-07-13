@@ -10,11 +10,6 @@ def landing():
 
 window = tk.Tk()
 
-frame = tk.Frame(master=window, width=900, height=900)
-frame.pack()
-
-cap = cv.VideoCapture(0)
-
 img = cv2.imread('logo.png')
 b,g,r = cv2.split(img)
 img = cv2.merge((r,g,b))
@@ -22,6 +17,8 @@ im = Image.fromarray(img)
 imgtk = ImageTk.PhotoImage(image=im) 
 
 while True:
+    frame = tk.Frame(master=window, width=900, height=900)
+    frame.pack()
     
     btn_TO = tk.Button(master=frame, text="Take Off", command=takeoff)
     btn_TO.place(x=250, y=800)
