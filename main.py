@@ -42,6 +42,8 @@ while True:
     
     if (width < 150):
         controlPitch = 20
+    elif (width > 200):
+        controlPitch = -20
     else:
         controlPitch = 0
         
