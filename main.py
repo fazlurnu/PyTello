@@ -1,10 +1,9 @@
 from DroneController import Tello
 from FaceDetection import detect_face
 import cv2 as cv
-import time
 
-kpX = 0.15
-kpY = 0.3
+kpX = 0.3
+kpY = 0.4
 
 tello = Tello()
 
@@ -12,20 +11,6 @@ tello = Tello()
 bat = tello.get_battery()
 
 print(bat)
-
-is_takeoff = False
-counter = 0
-
-while not is_takeoff:
-    print(tello.get_yaw(), counter)
-    if tello.get_yaw() < -30:
-        counter += 1
-        time.sleep(1)
-        
-    if counter > 3:
-        is_takeoff=True
-        print("ready")
-        time.sleep(5)
     
 tello.streamon()
 tello.takeoff()
@@ -43,9 +28,9 @@ while True:
     controlY = diff_y * kpY
     
     if (width < 150):
-        controlPitch = 20
+        controlPitch = 50
     elif (width > 200):
-        controlPitch = -20
+        controlPitch = -50
     else:
         controlPitch = 0
         
