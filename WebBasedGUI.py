@@ -3,6 +3,9 @@ from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
+
+from MyDrone import MyDrone
+
 import threading
 import argparse
 import datetime
@@ -14,6 +17,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
+    myDrone = MyDrone()
+    myDrone.print_here()
     return render_template("index.html")
     
 @app.route("/about")
