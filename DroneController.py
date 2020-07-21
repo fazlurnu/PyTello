@@ -89,9 +89,6 @@ class Tello:
 
         drones[host] = {'responses': [], 'state': {}, }
         
-        self.connect()
-        self.streamon()
-        
     
     def get_own_udp_object(self):
         global drones
@@ -708,8 +705,8 @@ class Tello:
         """
         if time.time() - self.last_rc_control_timestamp > self.TIME_BTW_RC_CONTROL_COMMANDS:
             self.last_rc_control_timestamp = time.time()
-            lower_limit = -35
-            upper_limit = 35
+            lower_limit = -50
+            upper_limit = 50
             return self.send_command_without_return('rc %s %s %s %s' % (self.set_limit(left_right_velocity, lower_limit, upper_limit),
                                                                         self.set_limit(forward_backward_velocity, lower_limit, upper_limit),
                                                                         self.set_limit(up_down_velocity, lower_limit, upper_limit),
