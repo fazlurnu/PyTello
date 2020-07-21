@@ -15,6 +15,8 @@ import cv2
 
 app = Flask(__name__)
 
+is_flying = False
+
 @app.route("/")
 def home():
     myDrone = MyDrone()
@@ -24,6 +26,20 @@ def home():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route('/background_process_test')
+def background_process_test():
+    global is_flying
+    
+    if (is_flying):
+        print("Landing")
+    else:
+        print("Take off")
+
+    is_flying = not(is_flying)
+    
+    #print ("Drone is flying: " + str(is_flying))
+    return ("nothing")
     
 if __name__ == "__main__":
     app.run(debug=True)
