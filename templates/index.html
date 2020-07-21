@@ -27,6 +27,19 @@
 
     </style>
 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('button#TO_LD').bind('click', function() {
+                $.getJSON('/background_process_test',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+
   </head>
 
   <body>
@@ -36,6 +49,14 @@
     <p id="status">Status: Landed</p>
     
     <button id="TO_LD" class="button button1" onclick="myFunction()">Take Off</button>
+
+    <div class='container'>
+        <h3>Test</h3>
+            <form>
+                <a href=# id=test><button class='btn btn-default'></button> Test</button></a>
+            </form>
+
+    </div>
 
     <script>
       function myFunction() {
