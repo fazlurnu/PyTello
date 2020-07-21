@@ -31,7 +31,14 @@
     <script type=text/javascript>
             $(function() {
               $('button#TO_LD').bind('click', function() {
-                $.getJSON('/background_process_test',
+                $.getJSON('/TO_LD',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+              $('button#connect').bind('click', function() {
+                $.getJSON('/connect',
                     function(data) {
                   //do nothing
                 });
@@ -48,14 +55,9 @@
 
     <p id="status">Status: Landed</p>
     
-    <button id="TO_LD" class="button button1" onclick="myFunction()">Take Off</button>
-
     <div class='container'>
-        <h3>Test</h3>
-            <form>
-                <a href=# id=test><button class='btn btn-default'></button> Test</button></a>
-            </form>
-
+      <button id="connect" class="button button1">Connect</button>    
+      <button id="TO_LD" class="button button1" onclick="myFunction()">Take Off</button>    
     </div>
 
     <script>
