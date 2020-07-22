@@ -3,6 +3,7 @@ from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
+
 from DroneController import Tello
 
 app = Flask(__name__)
@@ -11,7 +12,8 @@ is_flying = False
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    message = "shiap"
+    return render_template("index.html", message=message)
     
 @app.route("/about")
 def about():
@@ -20,11 +22,14 @@ def about():
 @app.route('/TO_LD')
 def TO_LD():
     global is_flying
+    global tello
     
     if (is_flying):
+        tello.land()
         print("Landing")
         
     else:
+        tello.takeoff()
         print("Take off")
 
     is_flying = not(is_flying)
@@ -34,7 +39,11 @@ def TO_LD():
 
 @app.route('/connect')
 def connect():
-    print("connect")
+    global tello
+    
+    tello = Tello()
+    print(tello.connect())
+
     return ("nothing")
     
 if __name__ == "__main__":
