@@ -9,15 +9,15 @@ from threading import Thread
 drones = None
 client_socket = None
 
+
 class Tello:
-    
     # Send and receive commands, client socket
     RESPONSE_TIMEOUT = 7  # in seconds
     TIME_BTW_COMMANDS = 0.1  # in seconds
     TIME_BTW_RC_CONTROL_COMMANDS = 0.001  # in seconds
     RETRY_COUNT = 3  # number of retries after a failed command
     TELLO_IP = '192.168.10.1'  # Tello IP address
-    
+
     # Set up logger
     HANDLER = logging.StreamHandler()
     FORMATTER = logging.Formatter('[%(levelname)s] %(filename)s - %(lineno)d - %(message)s')
@@ -26,15 +26,15 @@ class Tello:
     LOGGER = logging.getLogger('djitellopy')
     LOGGER.addHandler(HANDLER)
     LOGGER.setLevel(logging.INFO)
-    
+
     # Video stream, server socket
     VS_UDP_IP = '0.0.0.0'
     VS_UDP_PORT = 11111
-    
+
     # Control and state port
     CONTROL_UDP_PORT = 8889
     STATE_UDP_PORT = 8890
-    
+
     # conversion functions for state protocol fields
     state_field_converters = {
         # common entries
@@ -55,15 +55,14 @@ class Tello:
         'agy': float,
         'agz': float,
     }
-    
+
     # VideoCapture object
     cap = None
     background_frame_read = None
-    
+
     stream_on = False
     is_flying = False
 
-    
     def __init__(self, host=TELLO_IP, retry_count=RETRY_COUNT):
 
         global drones
@@ -88,8 +87,7 @@ class Tello:
             state_receiver_thread.start()
 
         drones[host] = {'responses': [], 'state': {}, }
-        
-    
+
     def get_own_udp_object(self):
         global drones
 
@@ -122,7 +120,7 @@ class Tello:
             except Exception as e:
                 Tello.LOGGER.error(e)
                 break
-            
+
     @staticmethod
     def udp_state_receiver():
         """Setup state UDP receiver. This method listens for state information from
@@ -149,7 +147,7 @@ class Tello:
             except Exception as e:
                 Tello.LOGGER.error(e)
                 break
-            
+
     @staticmethod
     def parse_state(state: str) -> dict:
         """Parse a state line to a dictionary
@@ -181,14 +179,14 @@ class Tello:
             state_dict[key] = value
 
         return state_dict
-    
+
     def get_current_state(self) -> dict:
         """Call this function to attain the state of the Tello. Returns a dict
         with all fields.
         Internal method, you normally wouldn't call this yourself.
         """
         return self.get_own_udp_object()['state']
-    
+
     def get_state_field(self, key: str) -> any:
         """Get a specific sate field by name.
         Internal method, you normally wouldn't call this yourself.
@@ -199,14 +197,14 @@ class Tello:
             return state[key]
         else:
             raise Exception('Could not get state property ' + key)
-            
+
     def get_pitch(self) -> int:
         """Get pitch in degree
         Returns:
             int: pitch in degree
         """
         return self.get_state_field('pitch')
-    
+
     def get_roll(self) -> int:
         """Get roll in degree
         Returns:
@@ -322,7 +320,7 @@ class Tello:
             int: 0-100
         """
         return self.get_state_field('bat')
-    
+
     def get_udp_video_address(self) -> str:
         """Internal method, you normally wouldn't call this youself.
         """
@@ -355,7 +353,7 @@ class Tello:
 
     def stop_video_capture(self):
         return self.streamoff()
-            
+
     def send_command_with_return(self, command: str, timeout: int = RESPONSE_TIMEOUT):
         """Send command to Tello and wait for its response.
         Internal method, you normally wouldn't call this yourself.
@@ -707,10 +705,11 @@ class Tello:
             self.last_rc_control_timestamp = time.time()
             lower_limit = -50
             upper_limit = 50
-            return self.send_command_without_return('rc %s %s %s %s' % (self.set_limit(left_right_velocity, lower_limit, upper_limit),
-                                                                        self.set_limit(forward_backward_velocity, lower_limit, upper_limit),
-                                                                        self.set_limit(up_down_velocity, lower_limit, upper_limit),
-                                                                        self.set_limit(yaw_velocity, lower_limit, upper_limit)))
+            return self.send_command_without_return(
+                'rc %s %s %s %s' % (self.set_limit(left_right_velocity, lower_limit, upper_limit),
+                                    self.set_limit(forward_backward_velocity, lower_limit, upper_limit),
+                                    self.set_limit(up_down_velocity, lower_limit, upper_limit),
+                                    self.set_limit(yaw_velocity, lower_limit, upper_limit)))
 
     def set_limit(self, x: int, lower: int, upper: int):
         if x > upper:

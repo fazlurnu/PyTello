@@ -3,6 +3,8 @@ Using various image processing to control [DJI Tello](https://store.dji.com/shop
 
 ## Libraries and Packages
 * OpenCV
+* imutils
+* Flask
 
 ## Programs
 Below is list of programs available in this repository

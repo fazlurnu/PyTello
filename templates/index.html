@@ -1,163 +1,158 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>DJI Tello</title>
     <style>
-      .button {
-        background-color:white;
-        border: 2px solid red;
-        color: red;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 8px;
-        width: 150px;
-      }
+        .button {
+            background-color: white;
+            border: 2px solid red;
+            color: red;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 150px;
+        }
 
-      .button:hover {
-        background-color: red;
-        color: white;
-      }
+        .button:hover {
+            background-color: red;
+            color: white;
+        }
 
-      .button2 {
-        background-color:white;
-        border: 2px solid grey;
-        color: grey;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 8px;
-        width: 100px;
-      }
+        .button2 {
+            background-color: white;
+            border: 2px solid grey;
+            color: grey;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 100px;
+        }
 
-      .button2:hover {
-        background-color: grey;
-        color: white;
-      }
-      
-      .grid-container {
-        display: grid;
-        grid-template-columns: 100px 100px auto 40px;
-        grid-gap: 10px;
-        padding: 10px;
-      }
+        .button2:hover {
+            background-color: grey;
+            color: white;
+        }
 
-      .grid-container-lain {
-        display: grid;
-        grid-template-columns: 400px 200px auto 40px;
-        grid-gap: 10px;
-        padding: 10px;
-      }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 100px 100px auto 40px;
+            grid-gap: 10px;
+            padding: 10px;
+        }
+
+        .grid-container-lain {
+            display: grid;
+            grid-template-columns: 400px 200px auto 40px;
+            grid-gap: 10px;
+            padding: 10px;
+        }
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type=text/javascript>
-            $(function() {
-              $('button#TO_LD').bind('click', function() {
+        $(function () {
+            $('button#TO_LD').bind('click', function () {
                 $.getJSON('/TO_LD',
-                    function(data) {
-                  //do nothing
-                });
+                    function (data) {
+                        //do nothing
+                    });
                 return false;
-              });
-
-              $('button#connect').bind('click', function() {
-                $.getJSON('/connect',
-                    function(data) {
-                  //do nothing
-                });
-                return false;
-              });
-
-              $('button#button').bind('click', function() {
-                $.getJSON('/button',
-                    function(data) {
-                  //do nothing
-                });
-                return false;
-              });
             });
+
+            $('button#connect').bind('click', function () {
+                $.getJSON('/connect',
+                    function (data) {
+                        //do nothing
+                    });
+                return false;
+            });
+
+            $('button#button').bind('click', function () {
+                $.getJSON('/button',
+                    function (data) {
+                        //do nothing
+                    });
+                return false;
+            });
+        });
     </script>
 
-  </head>
+</head>
 
-  <body>
-    {% extends "template.html" %}
-    {% block content %}
-
+<body>
+{% extends "template.html" %}
+{% block content %}
     <p id="status">Status: Landed</p>
-
-    
     <div class='grid-container-lain'>
-      <div>
-        <div class='grid-container'>
-          <p></p>
-          <button id="up" class="button2">Up</button>
-          <p></p>
-        </div>
-      
-        <div class='grid-container'>
-          <button id="yaw_left" class="button2">Yaw L</button>
-          <p></p>
-          <button id="yaw_right" class="button2">Yaw R</button>
-        </div>
-      
-        <div class='grid-container'>
-          <p></p>
-          <button id="down" class="button2">Down</button>
-          <p></p>
-        </div>
-      </div>
+        <div>
+            <div class='grid-container'>
+                <p></p>
+                <button id="up" class="button2">Up</button>
+                <p></p>
+            </div>
 
-      <div>
-        <div class='grid-container'>
-          <p></p>
-          <button id="up" class="button2">FW</button>
-          <p></p>
+            <div class='grid-container'>
+                <button id="yaw_left" class="button2">Yaw L</button>
+                <p></p>
+                <button id="yaw_right" class="button2">Yaw R</button>
+            </div>
+
+            <div class='grid-container'>
+                <p></p>
+                <button id="down" class="button2">Down</button>
+                <p></p>
+            </div>
         </div>
-      
-        <div class='grid-container'>
-          <button id="yaw_left" class="button2">Roll L</button>
-          <p></p>
-          <button id="yaw_right" class="button2">Roll R</button>
+
+        <div>
+            <div class='grid-container'>
+                <p></p>
+                <button id="up" class="button2">FW</button>
+                <p></p>
+            </div>
+
+            <div class='grid-container'>
+                <button id="yaw_left" class="button2">Roll L</button>
+                <p></p>
+                <button id="yaw_right" class="button2">Roll R</button>
+            </div>
+
+            <div class='grid-container'>
+                <p></p>
+                <button id="down" class="button2">BW</button>
+                <p></p>
+            </div>
         </div>
-      
-        <div class='grid-container'>
-          <p></p>
-          <button id="down" class="button2">BW</button>
-          <p></p>
-        </div>
-      </div>
     </div>
 
     <div class='container'>
-        <button id="connect" class="button">Connect</button>    
-        <button id="TO_LD" class="button" onclick="myFunction()">Take Off</button>    
+        <button id="connect" class="button">Connect</button>
+        <button id="TO_LD" class="button" onclick="myFunction()">Take Off</button>
     </div>
 
     <script>
-      function myFunction() {
-        if (document.getElementById("TO_LD").innerHTML == "Take Off"){
-            document.getElementById("TO_LD").innerHTML = "Landing";
-            document.getElementById("status").innerHTML = "Status: Flying";
+        function myFunction() {
+            if (document.getElementById("TO_LD").innerHTML == "Take Off") {
+                document.getElementById("TO_LD").innerHTML = "Landing";
+                document.getElementById("status").innerHTML = "Status: Flying";
+            } else {
+                document.getElementById("TO_LD").innerHTML = "Take Off";
+                document.getElementById("status").innerHTML = "Status: Landed";
+            }
+
         }
-        
-        else{
-          document.getElementById("TO_LD").innerHTML = "Take Off";
-          document.getElementById("status").innerHTML = "Status: Landed";
-        }
-          
-      }
-      </script>
-    {% endblock %}
-  </body>
+    </script>
+{% endblock %}
+</body>
 </html>
