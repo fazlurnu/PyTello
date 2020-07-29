@@ -1,6 +1,6 @@
 # PyTello
 
-[FaceTracking.gif](FaceTracking.gif)
+[FaceTracking.gif](!FaceTracking.gif)
 
 Using various image processing to control [DJI Tello](https://store.dji.com/shop/tello-series). The video is streamed from Tello to a laptop and processed off board. The laptop then send commands to the drone.
 
