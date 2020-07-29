@@ -2,7 +2,7 @@
 
 ![FaceTracking.gif](/FaceTracking.gif)
 
-Using various image processing to control [DJI Tello](https://store.dji.com/shop/tello-series). The video is streamed from Tello to a laptop and processed off board. The laptop then send commands to the drone.
+Using various image processing to control [DJI Tello](https://store.dji.com/shop/tello-series). The video is streamed from Tello to a laptop and processed off board. The laptop then send commands to the drone. The goal of this project is to learn high-level control for drones.
 
 ## Libraries and Packages
 * OpenCV
